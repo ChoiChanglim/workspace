@@ -7,6 +7,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta property="fb:pages" content="1418218805139858" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 <script src=/resources/js/jquery-1.11.3.min.js></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
