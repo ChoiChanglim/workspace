@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <classPathEntry location="D:\NHNEnt\repository\mysql\mysql-connector-java\5.1.34\mysql-connector-java-5.1.34.jar" />
+    <context id="Destiny">
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.161.142.74:13306/s629_hw_event" userId="s629web" password="rpdlatkdjqqn!@#" />
+        <javaModelGenerator targetPackage="my.random.bean" targetProject="Destiny" />
+        <sqlMapGenerator targetPackage="my.random.example" targetProject="Destiny" />
+        <javaClientGenerator targetPackage="my.random.mapper" targetProject="Destiny" type="XMLMAPPER" />
+        <table schema="lucky_log" tableName="lucky_log" domainObjectName="Luckylog">
+            <!-- <columnOverride column="itemType" javaType="java.lang.Integer" />
+            <columnOverride column="missionNum" javaType="java.lang.Integer" /> -->
+        </table>
+    </context>
+</generatorConfiguration>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="my.random.mapper.DestinyInfoMapper" >
+    <select id="getLastDestinyInfo" resultType="my.random.bean.DestinyInfo">
+        select * from destiny_info
+        order by gno desc
+        limit 0, 1
+    </select>
+
+</mapper>
