@@ -3,6 +3,7 @@ ManageTest.class
 callback\EventApplication$1.class
 callback\CallbackEvent.class
 ValidTest.class
+SyncLoopTest.class
 callback\EventApplication.class
 callback\EventRegistration.class
 ExcelParse.class

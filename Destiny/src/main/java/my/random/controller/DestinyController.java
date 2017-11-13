@@ -71,5 +71,10 @@ public class DestinyController {
 
         return modelAndView;
     }
-
+    
+    @RequestMapping(value = "/policy", method = RequestMethod.GET)
+    public ModelAndView policy(HttpServletRequest req, HttpServletResponse res) {
+        ModelAndView modelAndView = new ModelAndView();
+        return modelAndView;
+    }
 }
