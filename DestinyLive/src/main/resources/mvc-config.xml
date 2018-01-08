@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:websocket="http://www.springframework.org/schema/websocket"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+    <!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+        up static resources in the ${webappRoot}/resources directory -->
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+    <!-- 처리할 수 없는 요청은 컨테이너(톰캣)에게 위임하는 설정 -->
+    <!-- 정적인 요소들(html, js, css, gif)을 넘김 -->
+    <context:component-scan base-package="my" />   
+
+    <!-- Enables the Spring MVC @Controller programming model -->
+    <mvc:annotation-driven />
+   	
+    
+    <mvc:interceptors>
+            <mvc:interceptor>
+	            <mvc:mapping path="/**" />
+	            <mvc:exclude-mapping path="/resources/**" />
+	            <bean class="org.springframework.mobile.device.DeviceResolverHandlerInterceptor" />
+            </mvc:interceptor>
+            <mvc:interceptor>
+                <mvc:mapping path="/**" />
+                <mvc:exclude-mapping path="/resources/**" />
+                <bean class="org.springframework.mobile.device.site.SitePreferenceHandlerInterceptor" />
+            </mvc:interceptor>
+            <mvc:interceptor>
+                <mvc:mapping path="/**" />
+                <mvc:exclude-mapping path="/resources/**" />
+                <bean class="my.random.api.interceptor.CookieInterceptor" />
+            </mvc:interceptor>
+            <mvc:interceptor>
+                <mvc:mapping path="/**" />
+                <mvc:exclude-mapping path="/resources/**" />
+                <mvc:exclude-mapping path="/download" />
+                <bean class="my.random.api.interceptor.LayoutInterceptor" />
+            </mvc:interceptor>
+    </mvc:interceptors>
+    
+    <util:properties id="propinfo">
+        <prop key="ZONE">REAL</prop>
+        <prop key="TEMP_IMG_PATH">/home/hosting_users/yourlucky/temp/</prop>
+    </util:properties>
+    
+    <!-- pdfcrowd api -->
+    <bean id="htmlToImageClient" class="com.pdfcrowd.Pdfcrowd.HtmlToImageClient">
+        <constructor-arg value="battle9"/>
+        <constructor-arg value="aecb25cad6d93f1af11ada233df36146"/>
+    </bean>
+    
+    <!-- view resolver  -->
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="contentNegotiationManager">
+            <bean class="org.springframework.web.accept.ContentNegotiationManager">
+                <constructor-arg>
+                    <bean class="org.springframework.web.accept.PathExtensionContentNegotiationStrategy">
+                        <constructor-arg>
+                            <map>
+                                <entry key="json" value="application/json" />
+                                <entry key="*" value="text/html" />
+                            </map>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="viewResolvers">
+            <list>
+                <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+                    <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+                </bean>
+                
+                <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+			        <property name="prefix" value="/WEB-INF/jsp/" />
+			        <property name="suffix" value=".jsp" />
+			    </bean>
+            </list>
+        </property>
+        <property name="defaultViews">
+            <list>
+                <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+        <property name="definitions">
+            <list>
+                <value>classpath*:tiles.xml</value>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- exception 처리 -->
+    <bean class="my.random.api.exception.Exceptionlog">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="ParameterNotFoundException">exception/paramNotFound</prop>
+                <prop key="CustomException">exception/customException</prop>
+                <prop key="Exception">exception/error</prop>
+            </props>
+        </property>
+        <property name="defaultErrorView" value="exception/error" />
+    </bean>
+</beans>
