@@ -322,6 +322,14 @@
            <version>${spring.version}</version>
         </dependency>
         
+        <!-- https://mvnrepository.com/artifact/com.pdfcrowd/pdfcrowd -->
+		<dependency>
+		    <groupId>com.pdfcrowd</groupId>
+		    <artifactId>pdfcrowd</artifactId>
+		    <version>4.2.1</version>
+		</dependency>
+        
+        
         
     </dependencies>
     <build>
@@ -381,6 +389,7 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
+                	<serverXml>src/test/resources/server.xml</serverXml>
                     <port>80</port>
                     <protocol>org.apache.coyote.http11.Http11NioProtocol</protocol>
                     <path>/</path>
@@ -388,6 +397,7 @@
                     <!-- <httpsPort>8443</httpsPort>
                     <keystoreFile>testlocal</keystoreFile>
                     <keystorePass>123456</keystorePass> -->
+                  
                 </configuration>
                 <dependencies>
                 </dependencies>

@@ -32,7 +32,19 @@ public class CookieInterceptor extends HandlerInterceptorAdapter{
     }
 
 
+    public static String GetUkey(HttpServletRequest request, String param_ukey){
+    	if("".equals(param_ukey) == false){
+    		return param_ukey;
+    	}
+        if(RequestUtil.getCookieMap(request).containsKey("ukey")){
+            String ukey = RequestUtil.getCookieMap(request).get("ukey");
+            return ukey;
+        }
+
+        return StringUtil.getRandomString(6);
+    }
     public static String GetUkey(HttpServletRequest request){
+    	
         if(RequestUtil.getCookieMap(request).containsKey("ukey")){
             String ukey = RequestUtil.getCookieMap(request).get("ukey");
             return ukey;

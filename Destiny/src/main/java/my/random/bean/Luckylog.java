@@ -1,7 +1,9 @@
 package my.random.bean;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class Luckylog {
     /**
@@ -361,4 +363,16 @@ public class Luckylog {
     	c.setTime(getRegdate());
     	return c.getTimeInMillis()/1000;
     }
+    
+    List<Integer> luckynums = new ArrayList<Integer>();
+	public List<Integer> getLuckynums() {
+		luckynums.add(getNo1());
+		luckynums.add(getNo2());
+		luckynums.add(getNo3());
+		luckynums.add(getNo4());
+		luckynums.add(getNo5());
+		luckynums.add(getNo6());
+		return luckynums;
+	}
+    
 }

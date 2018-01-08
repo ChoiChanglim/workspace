@@ -1,13 +1,20 @@
 package my.random.api.exception;
 
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
+import my.instagram.constant.ExceptionMappingJacksonJsonView;
+import my.random.api.util.JsonUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -16,17 +23,17 @@ public class Exceptionlog extends SimpleMappingExceptionResolver{
     private static Logger LOG = LoggerFactory.getLogger(Exceptionlog.class);
 
     @Override
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object obj, Exception exception) {
-        JSONObject jsonResult = new JSONObject();
-        jsonResult.put("result", exception.getMessage());
-        if (exception instanceof MaxUploadSizeExceededException){
-            response.setContentType("application/json");
-            jsonResult.put("result", "MaxUploadSizeExceededException");
+    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
+    	if(exception instanceof CustomException){
+            ModelAndView modelAndView = new ModelAndView(new ExceptionMappingJacksonJsonView());
+            HashMap<String, Object> result = JsonUtil.JSONSourceToHashMap(exception.getMessage());
+        	modelAndView.addObject("result", result);	
+            
+            return modelAndView;
         }
-        if(exception instanceof CustomException == false){
-            LOG.error(exception.toString());
-        }
-        request.setAttribute("result", jsonResult);
-        return super.resolveException(request, response, obj, exception);
+    	LOG.error(exception.getMessage());
+		return null;
     }
+   
+    
 }

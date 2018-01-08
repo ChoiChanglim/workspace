@@ -10,6 +10,7 @@ import my.random.api.constant.LottoReader;
 import my.random.api.constant.YourLucky;
 import my.random.api.constant.YourLucky.BasicSetting;
 import my.random.api.exception.CustomException;
+import my.random.api.exception.ExceptionEnum;
 import my.random.bean.CustomSetting;
 import my.random.bean.DestinyInfo;
 import my.random.bean.Luckylog;
@@ -45,8 +46,9 @@ public class DestinyServiceImpl implements DestinyService{
     }
 
     @Override
-    public void insert(DestinyInfo destinyInfo) {
-        destinyInfoMapper.insert(destinyInfo);
+    public int insert(DestinyInfo destinyInfo) {
+    	int insert = destinyInfoMapper.insert(destinyInfo);
+    	return insert;
     }
 
     @Override
@@ -230,6 +232,72 @@ public class DestinyServiceImpl implements DestinyService{
 		
 		//System.err.println(new JSONArray(lastLogList));
 		return resultList;
+	}
+
+	@Override
+	public void updateGrade(int gno) {
+		DestinyInfo info = getDestinyInfoByGno(gno);
+		if(null == info){
+			ExceptionEnum.ResponseType.EMPTY_DESTINYINFO.setMessage(gno+" 회차 정보 없음!");
+			throw CustomException.EMPTY_DESTINYINFO;
+		}
+		
+		LuckylogExample example = new LuckylogExample();
+		example.createCriteria().andGnoEqualTo(gno);
+		List<Luckylog> logList = luckylogMapper.selectByExample(example);
+		Iterator<Luckylog> iter = logList.iterator();
+		
+		while(iter.hasNext()) {
+			Luckylog log = iter.next();
+			
+			int grade = 6;
+			int eqCount = 0;
+			Iterator<Integer> iter2 = log.getLuckynums().iterator();
+			while(iter2.hasNext()){
+				int no = iter2.next();
+				if(no == info.getNo1()){
+					eqCount++;
+				}
+				if(no == info.getNo2()){
+					eqCount++;
+				}
+				if(no == info.getNo3()){
+					eqCount++;
+				}
+				if(no == info.getNo4()){
+					eqCount++;
+				}
+				if(no == info.getNo5()){
+					eqCount++;
+				}
+				if(no == info.getNo6()){
+					eqCount++;
+				}
+				
+				//당첨순위 업데이트
+				if(eqCount == 3){
+					grade = 5;
+				}else if(eqCount == 4){
+					grade = 4;
+				}else if(eqCount == 5){
+					grade = 3;
+					if(no == info.getBonus()){
+						grade = 2;	
+					}
+					
+				}else if(eqCount == 6){
+					grade = 1;
+				}
+			}
+			//update 
+			if(grade < 6){
+				log.setGrade(grade);
+				luckylogMapper.updateByPrimaryKeySelective(log);
+				//System.err.println(log.getSeq()+" - "+"eqCount:"+eqCount+", grade:"+grade);
+			}
+			
+			
+		}
 	}
 
 

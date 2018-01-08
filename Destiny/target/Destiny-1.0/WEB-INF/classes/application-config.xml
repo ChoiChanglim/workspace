@@ -59,6 +59,22 @@
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean" />
     </bean>
     
+    <!-- 인스타 마이바티스 설정  -->
+	<bean id="instaSqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="typeAliasesPackage" value="my.instagram.bean" />
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="mapperLocations">
+			<array>
+				<value>classpath:my/instagram/example/*.xml</value>
+			</array>
+		</property>
+	</bean>
+	<bean id="noticeMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="my.instagram.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="instaSqlSessionFactoryBean" />
+	</bean>
+    
     <tx:annotation-driven transaction-manager="transactionManager" />
     <!-- 쿼츠 -->
     <bean id="manageService" class="my.random.service.ManageServiceImpl" />
@@ -93,7 +109,10 @@
     <bean name="quartzCronTriggerWeekly" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
         <property name="jobDetail" ref="quartzJobWeekly" />
         <!-- 매주 토요일 20시, 21시 5분간격으로 20초에 동작 -->
-        <property name="cronExpression" value="20 0/5 21,22 ? * SAT" />
+        <property name="cronExpression" value="20 0/5 21-23 ? * SAT" />
+        
+        <!-- 매 1분마다 실행 -->
+        <!-- <property name="cronExpression" value="0 0/1 * * * ?" /> -->
     </bean>
     
     <bean name="quartzJobWeekly" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">

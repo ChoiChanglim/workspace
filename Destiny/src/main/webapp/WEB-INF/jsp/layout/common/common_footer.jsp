@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"%>
 
-<footer class="footer">
+<footer class="footer" style="height:120px;">
   <div class="container">
     <p class="text-muted">Copyright(c) 2012 The-Dream.net<br>
 The Dream Company Inc.&nbsp;&nbsp;<a href="/policy" target="_blank">개인정보 취급방침</a><br>

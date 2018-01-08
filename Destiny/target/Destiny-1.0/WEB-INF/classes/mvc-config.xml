@@ -5,21 +5,23 @@
     xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
     xmlns:websocket="http://www.springframework.org/schema/websocket"
     xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd">
+        http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
     <!-- Handles HTTP GET requests for /resources/** by efficiently serving 
         up static resources in the ${webappRoot}/resources directory -->
     <mvc:resources mapping="/resources/**" location="/resources/" />
     <!-- 처리할 수 없는 요청은 컨테이너(톰캣)에게 위임하는 설정 -->
     <!-- 정적인 요소들(html, js, css, gif)을 넘김 -->
-    <context:component-scan base-package="my.random" />   
+    <context:component-scan base-package="my" />   
 
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven />
-   
+   	
     
     <mvc:interceptors>
             <mvc:interceptor>
@@ -40,9 +42,21 @@
             <mvc:interceptor>
                 <mvc:mapping path="/**" />
                 <mvc:exclude-mapping path="/resources/**" />
+                <mvc:exclude-mapping path="/download" />
                 <bean class="my.random.api.interceptor.LayoutInterceptor" />
             </mvc:interceptor>
     </mvc:interceptors>
+    
+    <util:properties id="propinfo">
+        <prop key="ZONE">ALPHA</prop>
+        <prop key="TEMP_IMG_PATH">D:/temp/</prop>
+    </util:properties>
+    
+    <!-- pdfcrowd api -->
+    <bean id="htmlToImageClient" class="com.pdfcrowd.Pdfcrowd.HtmlToImageClient">
+        <constructor-arg value="battle9"/>
+        <constructor-arg value="aecb25cad6d93f1af11ada233df36146"/>
+    </bean>
     
     <!-- view resolver  -->
     <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
@@ -97,7 +111,6 @@
                 <prop key="Exception">exception/error</prop>
             </props>
         </property>
-        <property name="exceptionAttribute" value="sampleException" />
         <property name="defaultErrorView" value="exception/error" />
     </bean>
 </beans>

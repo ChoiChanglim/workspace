@@ -3,6 +3,8 @@ package my.random.service;
 import java.util.Date;
 
 import my.random.api.constant.LottoReader;
+import my.random.api.exception.CustomException;
+import my.random.api.exception.ExceptionEnum;
 import my.random.api.util.DateUtil;
 import my.random.bean.DestinyInfo;
 import my.random.bean.WinNumber;
@@ -27,14 +29,17 @@ public class ManageServiceImpl implements ManageService{
         DestinyInfo lastDestinyInfo = destinyService.getLastDestinyInfo();
         if(null == lastDestinyInfo){
             logger.error("LastDestinyInfo is null!");
-            throw new RuntimeException();
+            ExceptionEnum.ResponseType.LOTTO_CRAWLING_EXCEPTION.setMessage("LAST INFO DB EMPTY!");
+    		throw CustomException.LOTTO_CRAWLING_EXCEPTION;
         }
+        
         String drawingDate = DateUtil.convertDateToString(new Date(), "yyyyMMdd");
         String gdateByLastGameDate = DateUtil.convertDateToString(lastDestinyInfo.getGdate(), "yyyyMMdd"); //yyyyMMdd
+        
         if(gdateByLastGameDate.equals(drawingDate) == false){//오늘 크롤링이 아직 안되었다면(당첨정보 업데이트가 아직 안되었을때)
             int gno = lastDestinyInfo.getGno() + 1;
             WinNumber winNumber = LottoReader.ReadWinnumberResult(gno);
-            if(winNumber.getGno() == gno){
+            if(winNumber.getGno() == gno && "0".equals(winNumber.getThirdAmount())== false ){
                 DestinyInfo destinyInfo = new DestinyInfo();
                 destinyInfo.setGno(gno);
                 destinyInfo.setNo1(winNumber.getNums().get(0));
@@ -51,7 +56,11 @@ public class ManageServiceImpl implements ManageService{
                 destinyInfo.setThirdCount(winNumber.getThirdCount());
                 destinyInfo.setThirdAmount(winNumber.getThirdAmount());
                 destinyInfo.setGdate(new Date());
-                destinyService.insert(destinyInfo);
+                
+                int insert = destinyService.insert(destinyInfo);
+                if(insert > 0){
+                	destinyService.updateGrade(gno);
+                }
 
                 logger.info("crawling() "+gno+"회차 정보 업데이트 완료! - "+new JSONObject(destinyInfo));
             }
