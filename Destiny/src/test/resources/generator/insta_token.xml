@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <classPathEntry location="D:\changlim\repository\mysql\mysql-connector-java\5.1.34\mysql-connector-java-5.1.34.jar" />
+    <context id="Destiny">
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://umj64-004.cafe24.com:3306/yourlucky" userId="yourlucky" password="dkfkdkfk1@" />
+        <javaModelGenerator targetPackage="my.instagram.bean" targetProject="Destiny" />
+        <sqlMapGenerator targetPackage="my.instagram.example" targetProject="Destiny" />
+        <javaClientGenerator targetPackage="my.instagram.mapper" targetProject="Destiny" type="XMLMAPPER" />
+        <table schema="insta_access" tableName="insta_access" domainObjectName="InstaAccess">
+            <!-- <columnOverride column="itemType" javaType="java.lang.Integer" />
+            <columnOverride column="missionNum" javaType="java.lang.Integer" /> -->
+        </table>
+    </context>
+</generatorConfiguration>
