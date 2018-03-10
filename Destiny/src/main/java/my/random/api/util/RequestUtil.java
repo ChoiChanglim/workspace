@@ -202,6 +202,13 @@ public class RequestUtil {
 	    }
         return value;
     }
+	public static String setCookieByMinute(HttpServletResponse response, String cookieName, String value, int minute){
+        Cookie cookie = new Cookie(cookieName, value);
+        cookie.setMaxAge(60 * minute);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return value;
+    }
 
 
 
@@ -237,6 +244,15 @@ public class RequestUtil {
             LOG.debug("HEADER key:"+key+", value:"+value);
         }
         return map;
+	}
+	/**
+	 * 리퀘스트를 쿼리스트링 문자열로
+	 * @param req
+	 * @return
+	 */
+	public static String getQstr(HttpServletRequest req){
+	    HashMap<String, Object> qmap = reqParamToMap(req);
+	    return RequestUtil.getQstr(qmap);
 	}
 
 }

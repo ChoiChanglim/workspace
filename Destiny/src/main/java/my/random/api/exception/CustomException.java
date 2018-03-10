@@ -49,6 +49,8 @@ public class CustomException extends RuntimeException {
     //크롤링
     public static final CustomException LOTTO_CRAWLING_EXCEPTION = new CustomException(ResponseType.LOTTO_CRAWLING_EXCEPTION);
 
+	public static final CustomException HTTP_WEB_CALL_EXCEPTION = new CustomException(ResponseType.HTTP_WEB_CALL_EXCEPTION);
+
 
 
 

@@ -41,7 +41,8 @@ public class ExceptionEnum {
         INSTAGRAM_AUTH_CODE_EXCEPTION,
         INSTAGRAM_ACCESS_TOKEN_EXCEPTION, 
         
-        LOTTO_CRAWLING_EXCEPTION;
+        LOTTO_CRAWLING_EXCEPTION, 
+        HTTP_WEB_CALL_EXCEPTION;
         
         private Object message;
         public void setMessage(String message) {
