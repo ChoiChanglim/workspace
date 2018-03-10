@@ -13,10 +13,10 @@
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} | %-5level | %thread | %logger{0} | %m%n%ex{10}</pattern>
         </encoder>
-        <file>D:/dev/temp/home/hosting_users/yourlucky/tomcat/logs/destiny.log</file>
+        <file>/home/hosting_users/yourlucky/tomcat/logs/destiny.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>D:/dev/temp/home/hosting_users/yourlucky/tomcat/logs/destiny-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>/home/hosting_users/yourlucky/tomcat/logs/destiny-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- or whenever the file size reaches 100MB -->
