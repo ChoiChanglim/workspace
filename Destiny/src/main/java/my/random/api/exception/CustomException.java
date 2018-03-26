@@ -51,6 +51,12 @@ public class CustomException extends RuntimeException {
 
 	public static final CustomException HTTP_WEB_CALL_EXCEPTION = new CustomException(ResponseType.HTTP_WEB_CALL_EXCEPTION);
 
+	public static final CustomException INVALID_IMAGE_FILE = new CustomException(ResponseType.INVALID_IMAGE_FILE);
+
+	public static final CustomException MimeTypeDetectException = new CustomException(ResponseType.MimeTypeDetectException);
+
+	public static CustomException UploadFileSaveException = new CustomException(ResponseType.UploadFileSaveException);
+
 
 
 

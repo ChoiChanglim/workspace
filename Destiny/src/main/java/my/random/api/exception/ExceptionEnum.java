@@ -42,7 +42,7 @@ public class ExceptionEnum {
         INSTAGRAM_ACCESS_TOKEN_EXCEPTION, 
         
         LOTTO_CRAWLING_EXCEPTION, 
-        HTTP_WEB_CALL_EXCEPTION;
+        HTTP_WEB_CALL_EXCEPTION, UploadFileSaveException, INVALID_IMAGE_FILE, MimeTypeDetectException;
         
         private Object message;
         public void setMessage(String message) {
