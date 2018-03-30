@@ -8,7 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -171,6 +173,32 @@ public class DestinyController {
         FileCopyUtils.copy(inputStream, res.getOutputStream());
     }
     
-    
+    /**
+     * slick pageing
+     * @param req
+     * @param res
+     * @param ukey
+     * @return
+     */
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    public ModelAndView list(HttpServletRequest req, HttpServletResponse res,
+    		@RequestParam(value = "page", required = false, defaultValue = "1") int page
+    		) {
+        ModelAndView modelAndView = new ModelAndView();
+        
+        int limit  = 6;
+        List<HashMap<String, Object>> list = new ArrayList<HashMap<String,Object>>();
+        System.err.println("page:"+page);
+        for(int i=0;i<limit;i++){
+        	HashMap<String, Object> map = new HashMap<String, Object>();
+        	int no = (i+1) + ((page-1) * limit);
+        	//System.err.println(no);
+        	map.put("key", no);
+        	map.put("cont", "AB"+no);
+        	list.add(map);
+        }
+        modelAndView.addObject("list", list);
+        return modelAndView;
+    }
     
 }

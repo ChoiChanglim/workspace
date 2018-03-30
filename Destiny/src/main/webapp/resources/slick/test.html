@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Slick Playground</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="./slick/slick.css">
+  <link rel="stylesheet" type="text/css" href="./slick/slick-theme.css">
+  <style type="text/css">
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .slider {
+        width: 50%;
+        margin: 100px auto;
+    }
+
+    .slick-slide {
+      margin: 0px 20px;
+    }
+
+    .slick-slide img {
+      width: 100%;
+    }
+
+    .slick-prev:before,
+    .slick-next:before {
+      color: black;
+    }
+
+
+    .slick-slide {
+      transition: all ease-in-out .3s;
+      opacity: .2;
+    }
+    
+    .slick-active {
+      opacity: .5;
+    }
+
+    .slick-current {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+	<button class="left-selector">prev</button>
+	<button class="right-selector">next</button>
+  <section class="regular slider">
+    <!-- <div>
+      <img src="http://placehold.it/350x300?text=1">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=2">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=3">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=4">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=5">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=6">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=7">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=8">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=9">
+    </div>
+    <div>
+      <img src="http://placehold.it/350x300?text=10">
+    </div> -->
+  </section>
+
+
+  <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
+  <script src="./slick/slick.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/resources/js/common.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript">
+  Page = function(){
+  	this.current = 1;
+  	this.max=1;
+  }
+  Page.prototype.setPage = function(page){
+	if(page < 1){
+		page = 1;
+	}  
+  	this.current = page;
+  	if(this.max < page){
+  		this.max = page;	
+  	}
+  	
+  }
+    $(document).on('ready', function() {
+    	for(var i=1;i<7;i++){
+    		jQuery(".regular").append("<div><img src='http://placehold.it/350x300?text="+i+"'></div>");
+    	}
+      var $opts = {
+    		dots: false,
+   	        infinite: false,
+   	     	arrows: false,
+   	        slidesPerRow:3,
+   	        rows:2,
+   	        slide: 'div'
+   	     	
+      }
+      var slider = $(".regular").slick($opts);
+      var page = new Page();
+      
+      $('.left-selector').click(function(){
+    	  slider.slick('slickPrev');
+    	  page.setPage(page.current-1);
+    	  addSlide();
+      });
+      $('.right-selector').click(function(){
+    	  slider.slick('slickNext');
+    	  page.setPage(page.current+1);
+    	  addSlide();
+      });
+      
+     
+      var addSlide = function(){
+    	  console.log("page:"+page.current);
+    	  var url = "/list.json";
+    	  var param = 'page='+page.current;
+    	  getJson(url, 'get', param, function(data){
+    		  slider.slick("unslick");
+			  $(".regular").find("div").remove();
+    		  console.log(data.list);
+    		  for(var i=0;i<data.list.length;i++){    			  
+    			  var obj = data.list[i];
+    			  //console.log(obj);
+    			  var el = "<div><img src='http://placehold.it/350x300?text="+obj.key+"'></div>";
+    			  $(".regular").append(el);
+    		  };
+    		  $(".regular").slick($opts);
+    	  });
+      }
+    });
+</script>
+
+</body>
+</html>
