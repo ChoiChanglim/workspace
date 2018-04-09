@@ -201,4 +201,12 @@ public class DestinyController {
         return modelAndView;
     }
     
+    @RequestMapping(value = "/input_token", method = RequestMethod.GET)
+    public ModelAndView input_token(HttpServletRequest req, HttpServletResponse res
+    		) {
+        ModelAndView modelAndView = new ModelAndView();
+     
+        return modelAndView;
+    }
+    
 }
