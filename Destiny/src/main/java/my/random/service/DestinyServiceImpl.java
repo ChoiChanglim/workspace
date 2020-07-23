@@ -238,7 +238,6 @@ public class DestinyServiceImpl implements DestinyService{
 	public void updateGrade(int gno) {
 		DestinyInfo info = getDestinyInfoByGno(gno);
 		if(null == info){
-			ExceptionEnum.ResponseType.EMPTY_DESTINYINFO.setMessage(gno+" 회차 정보 없음!");
 			throw CustomException.EMPTY_DESTINYINFO;
 		}
 		

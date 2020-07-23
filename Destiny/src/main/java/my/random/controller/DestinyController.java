@@ -19,16 +19,26 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import my.instagram.service.PdfcrowdService;
 import my.random.api.annotation.TilesOn;
 import my.random.api.constant.LottoReader;
 import my.random.api.constant.SessionScopeBean;
+import my.random.api.constant.SupportMember.MemberDivEnum;
+import my.random.api.exception.RedirectException;
 import my.random.api.interceptor.CookieInterceptor;
+import my.random.api.util.AesCipher;
 import my.random.api.util.RequestUtil;
+import my.random.api.util.StringUtil;
 import my.random.bean.Luckylog;
+import my.random.bean.Member;
 import my.random.service.DestinyService;
+import my.random.service.KakaoApiService;
+import my.random.service.LoginService;
+import my.random.service.LoginServiceImpl;
+import my.random.service.MemberService;
+import my.random.service.NaverApiService;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -45,12 +55,16 @@ public class DestinyController {
 
     @Autowired
     DestinyService destinyService;
+    
+    @Autowired
+    LoginService loginService;
+    
+    @Autowired
+    MemberService memberService;
 
     @Inject
     Provider<SessionScopeBean> sessionScopebeanFactory;
     
-    @Autowired
-    PdfcrowdService pdfcrowdService;
     
     @Value("#{propinfo['TEMP_IMG_PATH']}")
     private String TEMP_IMG_PATH;
@@ -61,16 +75,31 @@ public class DestinyController {
     		@RequestParam(value = "ukey", required = false, defaultValue = "") String ukey
     		) {
         ModelAndView modelAndView = new ModelAndView();
+        SessionScopeBean sessionBean = this.sessionScopebeanFactory.get();
+        String nick = "";
         if("".equals(ukey)){
         	ukey = CookieInterceptor.GetUkey(req, ukey);
+        	nick = CookieInterceptor.GetNick(req);
+        	
         }
-        modelAndView.addObject("nick", CookieInterceptor.GetNick(req));
+        
+        
+        if(sessionBean.isSignIn()){
+        	
+        	MemberDivEnum memberDivEnum = MemberDivEnum.GetMemberDivEnum(sessionBean.getUdiv());
+        	Member member = memberService.getUser(sessionBean.getUid(), memberDivEnum);
+        	ukey = sessionBean.getUid();
+        	nick = member.getUname();
+        }
+
+        modelAndView.addObject("nick", nick);
         modelAndView.addObject("lastResult", destinyService.getLastDestinyInfo());
         
         List<Luckylog> mylist = destinyService.getMyList(ukey, LottoReader.getGnum(new Date()));
         modelAndView.addObject("mylist", mylist);
         modelAndView.addObject("myLuckyList", destinyService.getMyLuckyList(ukey));
         modelAndView.addObject("ukey", ukey);
+        modelAndView.addObject("isSignin", sessionBean.isSignIn());
         
         
         if(mylist.size() > 2) {
@@ -87,9 +116,16 @@ public class DestinyController {
             @RequestParam(value = "nick", required = false, defaultValue = "") String nick,
             @RequestParam(value = "count", required = true) int count
             ) {
-
-        CookieInterceptor.SetNick(req, res, nick);
+    	SessionScopeBean sessionBean = this.sessionScopebeanFactory.get();
+        
         String ukey = CookieInterceptor.GetUkey(req);
+        if(sessionBean.isSignIn()){
+        	MemberDivEnum memberDivEnum = MemberDivEnum.GetMemberDivEnum(sessionBean.getUdiv());
+        	Member member = memberService.getUser(sessionBean.getUid(), memberDivEnum);
+        	ukey = sessionBean.getUid();
+        	nick = member.getUname();
+        }
+        CookieInterceptor.SetNick(req, res, nick);
         ModelAndView modelAndView = new ModelAndView();
         List<Integer[]> numsList =  destinyService.create(ukey, count);
         
@@ -107,31 +143,6 @@ public class DestinyController {
         return modelAndView;
     }
     
-    @RequestMapping(value = "/makeimg", method = RequestMethod.GET)
-    public String makeimg(HttpServletRequest req, HttpServletResponse res,
-    		RedirectAttributes redirectAttributes,
-    		@RequestParam(value = "ukey", required = false, defaultValue = "") String ukey
-    		) {
-        ModelAndView modelAndView = new ModelAndView();
-        boolean isMake = pdfcrowdService.makePng(ukey);
-        modelAndView.addObject("isMake", isMake);
-        //System.err.println("isMake:"+isMake);
-        if(isMake == true){
-        	redirectAttributes.addAttribute("ukey", ukey);
-        }
-        return "redirect:/toinstagram";
-    }
-    @RequestMapping(value = "/toinstagram", method = RequestMethod.GET)
-    public ModelAndView toinstagram(HttpServletRequest req, HttpServletResponse res,
-    		@RequestParam(value = "ukey", required = false, defaultValue = "") String ukey
-    		) {
-        ModelAndView modelAndView = new ModelAndView();
-        String img_url = "/temp/"+ukey+".png";
-        modelAndView.addObject("url", img_url);
-        modelAndView.addObject("ukey", ukey);
-        
-        return modelAndView;
-    }
     
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public void download(HttpServletRequest req, HttpServletResponse res,
@@ -209,4 +220,79 @@ public class DestinyController {
         return modelAndView;
     }
     
+    
+    @RequestMapping(value = "/login/signin")
+    public ModelAndView signin_by_etc(HttpServletRequest req, HttpServletResponse res,
+    		@RequestParam(value = "expt", required = false, defaultValue = "") String expt,
+    		@RequestParam(value = "udiv", required = false, defaultValue = "") String udiv
+    		){
+		SessionScopeBean sessionBean = this.sessionScopebeanFactory.get();
+		if(sessionBean.isSignIn()){
+			//throw RedirectException.UNACCEPTABLE_PAGE_EXCEPTION;
+		}
+		
+        ModelAndView modelAndView = new ModelAndView();
+        String referer = req.getHeader("referer"); 
+        if(StringUtil.isNull(referer)){
+        	referer = "/";
+        }
+        
+        AesCipher cipher  = new AesCipher(LoginServiceImpl.SIGNED_COOKIE_CIPHER_KEY);
+        RequestUtil.setCookieByMinute(res, LoginServiceImpl.SIGNED_REFERER_COOKIE_NAME, cipher.encrypt(referer), 30);
+        
+        MemberDivEnum memberDivEnum = MemberDivEnum.GetMemberDivEnum(udiv);
+        if(memberDivEnum == MemberDivEnum.NAVER){
+        	modelAndView.setViewName("redirect:/api/naver/login?expt="+expt);
+        	
+        }else if(memberDivEnum == MemberDivEnum.KAKAO){
+        	modelAndView.setViewName("redirect:/api/kakao/login?expt="+expt);
+        	
+        }else{
+        	//throw RedirectException.LOGIN_EXCEPTION;
+        	
+        }
+        return modelAndView;
+    }
+    
+    
+    @RequestMapping(value = "/logout")
+    public ModelAndView logout(HttpServletRequest req, HttpServletResponse res,
+    		@RequestParam(value = "referer", required = false, defaultValue = "") String referer,
+    		@RequestParam(value = "rechk", required = false, defaultValue = "") String rechk
+    		){
+        ModelAndView modelAndView = new ModelAndView();
+        if("".equals(referer)){
+        	referer = req.getHeader("referer");
+        	
+        }
+        if("".equals(rechk) == false){ //레퍼러체크가 기본값이 아니면 레퍼러 체크하지 말자.
+        	referer = "/";
+        }
+        
+        RequestUtil.setCookieByMinute(res, LoginServiceImpl.SIGNED_UID_COOKIE_NAME, "", -1);
+		RequestUtil.setCookieByMinute(res, LoginServiceImpl.SIGNED_UDIV_COOKIE_NAME, "", -1);
+		SessionScopeBean sessionBean = this.sessionScopebeanFactory.get();
+		MemberDivEnum memberDivEnum = MemberDivEnum.GetMemberDivEnum(sessionBean.getUdiv());
+		sessionBean.setUid(null);
+		sessionBean.setUdiv(null);
+		
+		
+		//플랫폼별 로그아웃 처리
+		if(memberDivEnum == MemberDivEnum.NAVER){
+			AesCipher cipher  = new AesCipher(NaverApiService.NaverServerCipherKey);
+			String accessToken = NaverApiService.GetAccessToken(req, res, cipher);
+	        NaverApiService.DeleteNaverAccessToken(accessToken);
+	        RequestUtil.deleteCookie(res, NaverApiService.ACCESS_TOKEN_COOKIE_NAME);
+	        RequestUtil.deleteCookie(res, NaverApiService.REFRESH_TOKEN_COOKIE_NAME);
+	        
+	        
+		}else if(memberDivEnum == MemberDivEnum.KAKAO){
+			RequestUtil.deleteCookie(res, KakaoApiService.KakaoAccessTokenCookieName);
+	        RequestUtil.deleteCookie(res, KakaoApiService.KakaoRefreshTokenCookieName);
+			
+		}
+		
+		modelAndView.setViewName("redirect:/");
+        return modelAndView;
+    }
 }

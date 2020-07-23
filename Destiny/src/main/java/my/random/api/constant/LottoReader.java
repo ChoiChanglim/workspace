@@ -166,7 +166,7 @@ public class LottoReader {
     }
 
     private static InputStream getExcelFileInputStream(HashMap<String, String> param) {
-        String downUrl = "http://www.nlotto.co.kr/gameResult.do";
+    	String downUrl = "https://www.dhlottery.co.kr/gameResult.do";
         String queryString = RequestUtil.getMapToQstr(param);
         downUrl = downUrl + "?" + queryString;
         LOG.info("Excel URL:" +downUrl);

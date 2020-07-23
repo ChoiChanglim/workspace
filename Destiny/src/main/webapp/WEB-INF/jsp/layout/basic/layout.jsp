@@ -21,7 +21,14 @@
 <![endif]-->
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="/resources/js/ie10-viewport-bug-workaround.js"></script>
-<title>Your destiny</title>
+<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script type='text/javascript'>
+  //<![CDATA[
+    // 사용할 앱의 JavaScript 키를 설정해 주세요.
+    Kakao.init('164d053cefea57d11571002fdef450b8');
+  //]]>
+</script>
+<title>A mollang</title>
 <t:insertAttribute name="common_header" />
 </head>
 <body>

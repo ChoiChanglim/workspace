@@ -15,7 +15,7 @@ public class YourLucky {
     public static enum BasicSetting{
         Odd_per(40),
         Even_per(60),
-        Continuity_per(50),
+        Continuity_per(40),
         Lastnum_per(40),
         ExceptLocation(0); //1, 10, 20, 30, 40, 0=랜덤
 

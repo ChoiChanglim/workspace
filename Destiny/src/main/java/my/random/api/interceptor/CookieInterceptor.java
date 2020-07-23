@@ -1,22 +1,39 @@
 package my.random.api.interceptor;
 
+import java.util.HashMap;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import my.random.api.constant.SessionScopeBean;
 import my.random.api.util.RequestUtil;
 import my.random.api.util.StringUtil;
+import my.random.service.LoginService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class CookieInterceptor extends HandlerInterceptorAdapter{
+	@Inject
+    Provider<SessionScopeBean> sessionScopebeanFactory;
+	
+	@Autowired
+    LoginService loginService;
+	
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    	SessionScopeBean sessionBean = this.sessionScopebeanFactory.get();
+        HashMap<String, String> cookieMap = RequestUtil.getCookieMap(request);
+        sessionBean.setSignIn(loginService.isSignIn(cookieMap));
+        
         if(RequestUtil.getCookieMap(request).containsKey("ukey") == false){
             String ukey = StringUtil.getRandomString(6);
             RequestUtil.setCookie(response, "ukey", ukey, 300);
         }
-
+        
         super.preHandle(request, response, handler);
         return true;
     }

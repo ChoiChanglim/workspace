@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+    <classPathEntry location="D:\dev\line\repository\mysql\mysql-connector-java\5.1.47\mysql-connector-java-5.1.47.jar" />
+    <context id="Destiny">
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.1.10:3306/yourlucky" userId="gm" password="didlsak1" />
+        <javaModelGenerator targetPackage="my.random.bean" targetProject="Destiny" />
+        <sqlMapGenerator targetPackage="my.random.example" targetProject="Destiny" />
+        <javaClientGenerator targetPackage="my.random.mapper" targetProject="Destiny" type="XMLMAPPER" />
+        <table schema="member" tableName="member" domainObjectName="Member">
+            <columnOverride column="age_range_min" javaType="java.lang.Integer" />
+            <columnOverride column="age_range_max" javaType="java.lang.Integer" />
+            <columnOverride column="gender" javaType="java.lang.String" />
+        </table>
+    </context>
+</generatorConfiguration>

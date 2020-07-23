@@ -29,7 +29,6 @@ public class ManageServiceImpl implements ManageService{
         DestinyInfo lastDestinyInfo = destinyService.getLastDestinyInfo();
         if(null == lastDestinyInfo){
             logger.error("LastDestinyInfo is null!");
-            ExceptionEnum.ResponseType.LOTTO_CRAWLING_EXCEPTION.setMessage("LAST INFO DB EMPTY!");
     		throw CustomException.LOTTO_CRAWLING_EXCEPTION;
         }
         

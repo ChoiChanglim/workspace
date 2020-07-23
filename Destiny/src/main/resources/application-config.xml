@@ -59,21 +59,22 @@
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean" />
     </bean>
     
-    <!-- 인스타 마이바티스 설정  -->
-	<bean id="instaSqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="typeAliasesPackage" value="my.instagram.bean" />
-		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:mybatis-config.xml" />
-		<property name="mapperLocations">
-			<array>
-				<value>classpath:my/instagram/example/*.xml</value>
-			</array>
-		</property>
-	</bean>
-	<bean id="noticeMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="my.instagram.mapper" />
-		<property name="sqlSessionFactoryBeanName" value="instaSqlSessionFactoryBean" />
-	</bean>
+    <!-- 회원 -->
+    <bean id="memberSqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="typeAliasesPackage" value="my.random.bean" />
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:mybatis-config.xml" />
+        <property name="mapperLocations">
+            <array>
+                <value>classpath:my/random/example/*.xml</value>
+                <value>classpath:my/random/mapper/*.xml</value>
+            </array>
+        </property>
+    </bean>
+    <bean id="memberMapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="my.random.mapper" />
+        <property name="sqlSessionFactoryBeanName" value="memberSqlSessionFactoryBean" />
+    </bean>
     
     <tx:annotation-driven transaction-manager="transactionManager" />
     <!-- 쿼츠 -->

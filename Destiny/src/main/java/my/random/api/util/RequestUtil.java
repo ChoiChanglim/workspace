@@ -254,5 +254,11 @@ public class RequestUtil {
 	    HashMap<String, Object> qmap = reqParamToMap(req);
 	    return RequestUtil.getQstr(qmap);
 	}
+	public static void deleteCookie(HttpServletResponse response, String cookieName){
+        Cookie cookie = new Cookie(cookieName, null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
 
 }

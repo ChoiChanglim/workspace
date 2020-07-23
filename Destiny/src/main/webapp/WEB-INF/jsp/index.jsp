@@ -45,14 +45,27 @@ jQuery(document).ready(function(){
 			alert("지난주 당첨 내역이 없거나 발급한 번호가 없습니다.");
 		}
 	});
-	
+	Kakao.Channel.createAddChannelButton({
+	    container: '#kakao-add-channel-button',
+	    channelPublicId: '_gXmsC' // 채널 홈 URL에 명시된 id로 설정합니다.
+	});
+	Kakao.Channel.createChatButton({
+	    container: '#kakao-talk-channel-chat-button',
+	    channelPublicId: '_gXmsC' // 카카오톡 채널 홈 URL에 명시된 id로 설정합니다.
+	});
 });
+
 </script>
 <div class="container">
   <div class="page-header">
-    <h3>[${lastResult.gno } 회차]</h3> 
+    <h3 style="display: inline-block;">[${lastResult.gno } 회차]</h3>&nbsp;<label><fmt:formatDate value="${lastResult.gdate }" pattern="yyyy.MM.dd"/></label> 
     <h3><strong>${lastResult.no1 }, ${lastResult.no2 }, ${lastResult.no3 }, ${lastResult.no4 }, ${lastResult.no5 }, ${lastResult.no6 }</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${lastResult.bonus }</h3>
     <h5>${lastResult.firstCount }명&nbsp;&nbsp;&nbsp; ${lastResult.firstAmount }</h5>
+    <c:if test="${isSignin == false }">
+        <span><a href="/login/signin?udiv=KAKAO"><img src="/resources/img/kakao_login_small.png" /></a></span>
+    </c:if>
+    <span id="kakao-add-channel-button"></span>
+    <span id="kakao-talk-channel-chat-button"></span>
   </div>
   
   <form id="lucky_form" class="form-inline" method="post" action="/create.json">
@@ -64,9 +77,9 @@ jQuery(document).ready(function(){
       <label for="count">몇 게임?</label>
       <select id="count" name="count" class="form-control">          
       	  <option <c:if test="${cookie.gcnt.value == 1}">selected</c:if>>1</option>
-      	  <option <c:if test="${cookie.gcnt.value == 3}">selected</c:if> <c:if test="${cookie.gcnt.value eq null}">selected</c:if>>3</option>
+      	  <option <c:if test="${cookie.gcnt.value == 3}">selected</c:if>>3</option>
       	  <option <c:if test="${cookie.gcnt.value == 4}">selected</c:if>>4</option>
-      	  <option <c:if test="${cookie.gcnt.value == 5}">selected</c:if>>5</option>
+      	  <option <c:if test="${cookie.gcnt.value == 5}">selected</c:if><c:if test="${cookie.gcnt.value eq null}">selected</c:if>>5</option>
       	  <option <c:if test="${cookie.gcnt.value == 10}">selected</c:if>>10</option>
 	  </select>	   
   </div>
@@ -123,7 +136,6 @@ jQuery(document).ready(function(){
 	    </tbody>
 	</table>
 </div>
-<div class="instabtn"><a id="toinsta_btn" href="${info.contextPath }/instagram/auth/getAuth" target="_blank"><img src="${info.contextPath }/resources/img/common/instalogo.jpg" width="30%"/></a></div>
 </div>
 
 <style>
