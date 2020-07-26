@@ -13,10 +13,10 @@
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} | %-5level | %thread | %logger{0} | %m%n%ex{10}</pattern>
         </encoder>
-        <file>/home/hosting_users/yourlucky/tomcat/logs/destiny.log</file>
+        <file>/Users/changlim/tomcat-7.0.100/logs/yourlucky.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>/home/hosting_users/yourlucky/tomcat/logs/destiny-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>/Users/changlim/tomcat-7.0.100/logs/yourlucky-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <!-- or whenever the file size reaches 100MB -->
@@ -30,9 +30,6 @@
         <appender-ref ref="ROLLING" />
     </appender>
 
-    <logger name="com.nhn" level="INFO" />
-    <logger name="com.nhncorp" level="INFO" />
-    <logger name="com.hangame" level="INFO" />
     <logger name="org.springframework" level="INFO" />
     <logger name="org.springframework.transaction" level="INFO" />
     

@@ -53,7 +53,7 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>                 
-                    <warName>ROOT##1.0Live</warName>
+                    <warName>ROOT</warName>
                     <overlay>
                         <groupId>com.nhn</groupId>
                         <artifactId>DestinyLive</artifactId>

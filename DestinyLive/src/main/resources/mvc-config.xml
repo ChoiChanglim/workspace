@@ -49,7 +49,7 @@
     
     <util:properties id="propinfo">
         <prop key="ZONE">REAL</prop>
-        <prop key="TEMP_IMG_PATH">/home/hosting_users/yourlucky/temp/</prop>
+        <prop key="TEMP_IMG_PATH">/Users/changlim/nginx_root/temp/</prop>
     </util:properties>
     
     <!-- pdfcrowd api -->
