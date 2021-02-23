@@ -109,7 +109,7 @@ public class KakaoApiController {
         String accessToken = (String)tokenResultMap.get("access_token");
         String refreshToken = (String)tokenResultMap.get("refresh_token");
         RequestUtil.setCookieByMinute(res, KakaoApiService.KakaoAccessTokenCookieName, cipher.encrypt(accessToken), 55); //55분
-        RequestUtil.setCookie(res, KakaoApiService.KakaoRefreshTokenCookieName, cipher.encrypt(refreshToken), 1);	//1일 
+        RequestUtil.setCookie(res, KakaoApiService.KakaoRefreshTokenCookieName, cipher.encrypt(refreshToken), 10);	//10일 
         
         HashMap<String, Object> kakaoUserProfile = KakaoApiService.KakaoGetUserProfile(accessToken);
         

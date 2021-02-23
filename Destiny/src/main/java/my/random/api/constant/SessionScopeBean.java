@@ -1,10 +1,17 @@
 package my.random.api.constant;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
+import my.random.api.util.RequestUtil;
+
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.socket.WebSocketSession;
 
 
@@ -22,7 +29,8 @@ public class SessionScopeBean implements Serializable{
     private Set<WebSocketSession> sessionSet = new HashSet<WebSocketSession>();
     String uid;
     String udiv;
-
+    
+    
     public long getUsn() {
         return usn;
     }
@@ -59,6 +67,5 @@ public class SessionScopeBean implements Serializable{
 	public void setUdiv(String udiv) {
 		this.udiv = udiv;
 	}
-
 
 }

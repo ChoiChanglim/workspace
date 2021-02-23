@@ -96,8 +96,7 @@ public class NaverApiController {
         }
         
         HashMap<String, Object> naverGetUserProfile = NaverApiService.NaverGetUserProfile(accessToken);
-        if(naverGetUserProfile.containsKey("name") == false 
-        		|| naverGetUserProfile.containsKey("email") == false){
+        if(naverGetUserProfile.containsKey("nickname") == false){
         	//이름과 이메일정보 제공에 동의하지 않으면 로그인 불가능.
         	throw RedirectException.REDIRECT_LOGIN_PAGE_BY_NO_REQUIRED_PARAMETERS;
         }
@@ -110,6 +109,11 @@ public class NaverApiController {
         	String gender = "";
         	if(naverGetUserProfile.containsKey("gender")){
         		gender = (String)naverGetUserProfile.get("gender");
+        	}
+        	
+        	String email = "";
+        	if(naverGetUserProfile.containsKey("email")){
+        		email = (String)naverGetUserProfile.get("email");
         	}
         	
         	String ageRange = "";
@@ -134,8 +138,8 @@ public class NaverApiController {
 	        Member m = new Member();
 	        m.setUid(nid);
 	        m.setUdiv(MemberDivEnum.NAVER.name());
-	        m.setUname((String)naverGetUserProfile.get("name"));
-	        m.setEmail((String)naverGetUserProfile.get("email"));        
+	        m.setUname((String)naverGetUserProfile.get("nickname"));
+	        m.setEmail(email);        
 	        m.setGender(gender);
 	        m.setAgeRangeMin(ageMin);
 	        m.setAgeRangeMax(ageMax);

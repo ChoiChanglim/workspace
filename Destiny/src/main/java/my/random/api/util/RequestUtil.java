@@ -260,5 +260,29 @@ public class RequestUtil {
         cookie.setPath("/");
         response.addCookie(cookie);
     }
+	/**
+	 * 키는 소문자, 값이 비었다면 제거.
+	 * @param req
+	 * @return
+	 */
+	public static HashMap<String, Object> reqParamToMapOfLowerCaseKeysAndBlankIgnore(HttpServletRequest req){
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		Enumeration<String> e = req.getParameterNames();
+		while(e.hasMoreElements()){
+			String key = e.nextElement().toString();
+			Object val = null;
+			if(key.contains("[]")){
+				val = req.getParameterValues(key);
+			}else{
+				val = req.getParameter(key).toString();
+			}
+
+			//System.out.println(key+" : "+val);
+			if("".equals(StringUtil.nullToBlank(val)) == false){
+				map.put(key.toLowerCase(), val);
+			}
+		}
+		return map;
+	}
 
 }

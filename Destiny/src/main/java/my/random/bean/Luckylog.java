@@ -3,6 +3,8 @@ package my.random.bean;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public class Luckylog {
@@ -364,8 +366,8 @@ public class Luckylog {
     	return c.getTimeInMillis()/1000;
     }
     
-    List<Integer> luckynums = new ArrayList<Integer>();
-	public List<Integer> getLuckynums() {
+    LinkedHashSet<Integer> luckynums = new LinkedHashSet<Integer>();
+	public LinkedHashSet<Integer> getLuckynums() {
 		luckynums.add(getNo1());
 		luckynums.add(getNo2());
 		luckynums.add(getNo3());

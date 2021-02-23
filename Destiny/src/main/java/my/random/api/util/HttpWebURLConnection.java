@@ -65,7 +65,14 @@ public class HttpWebURLConnection {
 	
 			//add request header
 			con.setRequestProperty("User-Agent", USER_AGENT);
-	
+			
+			Iterator<String> iter = this.header.keySet().iterator();
+		    while(iter.hasNext()){
+		        String key = iter.next();
+		        String value = this.header.get(key);
+		        con.setRequestProperty(key, value);
+		    }
+		    
 			int responseCode = con.getResponseCode();
 			LOG.debug("\nSending 'GET' request to URL : " + url);
 			LOG.debug("Response Code : " + responseCode);

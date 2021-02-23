@@ -31,7 +31,7 @@ public class NaverApiService {
 	
 	
 	public enum NaverApp{
-		WEB("UAe7GvXHKMLu842Qhhkz", "q5aXk7mq8D");
+		WEB("UR1wMwU0n4xqIhHJEvuZ", "X592B4L4no");
 		
 		private String id;
 		private String secret;

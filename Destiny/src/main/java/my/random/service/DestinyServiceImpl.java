@@ -11,15 +11,18 @@ import my.random.api.constant.YourLucky;
 import my.random.api.constant.YourLucky.BasicSetting;
 import my.random.api.exception.CustomException;
 import my.random.api.exception.ExceptionEnum;
+import my.random.api.util.DateUtil;
 import my.random.bean.CustomSetting;
 import my.random.bean.DestinyInfo;
 import my.random.bean.Luckylog;
 import my.random.bean.LuckylogExample;
+import my.random.bean.LuckylogExtends;
 import my.random.bean.WinNumber;
 import my.random.mapper.DestinyInfoMapper;
 import my.random.mapper.LuckylogMapper;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +102,8 @@ public class DestinyServiceImpl implements DestinyService{
         lastnum.add(destinyInfo.getNo4());
         lastnum.add(destinyInfo.getNo5());
         lastnum.add(destinyInfo.getNo6());
-
+        
+        
 
         List<Integer[]> result = new ArrayList<Integer[]>();
         for(int i=0;i<count;i++){
@@ -107,7 +111,7 @@ public class DestinyServiceImpl implements DestinyService{
             Integer[] nums = YourLucky.getNums(BasicSetting.Odd_per.getPercent(), BasicSetting.Even_per.getPercent(), BasicSetting.Continuity_per.getPercent(), BasicSetting.Lastnum_per.getPercent(), lastnum, BasicSetting.ExceptLocation.getPercent());
             result.add(nums);
             Luckylog log = new Luckylog();
-            log.setGno(LottoReader.getGnum(new Date()));
+            log.setGno(LottoReader.getGnum(new Date(), destinyInfo));
             log.setNick(ukey);
             log.setNo1(nums[0]);
             log.setNo2(nums[1]);
@@ -123,7 +127,7 @@ public class DestinyServiceImpl implements DestinyService{
         return result;
     }
 
-    @Override
+    /*@Override
     public DestinyInfo getLastinfo() {
         int gnum = LottoReader.getGnum(new Date());
         DestinyInfo destinyInfo = destinyInfoMapper.selectByPrimaryKey(gnum);
@@ -131,7 +135,7 @@ public class DestinyServiceImpl implements DestinyService{
             throw CustomException.EMPTY_DESTINYINFO;
         }
         return  destinyInfo;
-    }
+    }*/
 
     @Override
     public List<Integer[]> create(String ukey, int count, CustomSetting setting) {
@@ -148,7 +152,7 @@ public class DestinyServiceImpl implements DestinyService{
             Integer[] nums = YourLucky.getNums(setting.getOdd_per(), setting.getEven_per(), setting.getContinuity_per(), setting.getLastnum_per(), lastnum, setting.getExceptLocation());
             result.add(nums);
             Luckylog log = new Luckylog();
-            log.setGno(LottoReader.getGnum(new Date()));
+            log.setGno(LottoReader.getGnum(new Date(), destinyInfo));
             log.setNick(ukey);
             log.setNo1(nums[0]);
             log.setNo2(nums[1]);
@@ -173,38 +177,22 @@ public class DestinyServiceImpl implements DestinyService{
 	}
 	
 	@Override
-	public synchronized List<List<Integer>> getMyLuckyList(String ukey) {
+	public synchronized List<Luckylog> getMyLuckyList(String ukey) {
 		LuckylogExample example = new LuckylogExample();
 		DestinyInfo lastInfo = getLastDestinyInfo();
 		int lastGno = lastInfo.getGno();
-		
 		example.createCriteria().andGnoEqualTo(lastGno).andNickEqualTo(ukey);
 		
-		List<List<Integer>> lastLogList = new ArrayList<List<Integer>>();
 		List<Luckylog> list = luckylogMapper.selectByExample(example);
 		Iterator<Luckylog> iter = list.iterator();
 		
+		
+		List<Luckylog> resultList = new ArrayList<Luckylog>();
 		while(iter.hasNext()) {
 			Luckylog log = iter.next();
-			List<Integer> numsList = new ArrayList<Integer>();
-			numsList.add(log.getNo1());
-			numsList.add(log.getNo2());
-			numsList.add(log.getNo3());
-			numsList.add(log.getNo4());
-			numsList.add(log.getNo5());
-			numsList.add(log.getNo6());
-			
-			lastLogList.add(numsList);
-		}
-		
-		List<List<Integer>> resultList = new ArrayList<List<Integer>>();
-		Iterator<List<Integer>> iter2 = lastLogList.iterator();
-		while(iter2.hasNext()) {
-			List<Integer> nums = iter2.next();
 			
 			int luckyCount = 0;
-			for(int i=0;i<nums.size();i++) {
-				int no = nums.get(i);
+			for(int no :log.getLuckynums() ){
 				if(lastInfo.getNo1() == no) {
 					luckyCount++;
 				}
@@ -224,13 +212,13 @@ public class DestinyServiceImpl implements DestinyService{
 					luckyCount++;
 				}
 			}
+			
 			if(luckyCount > 2) {
-				resultList.add(nums);
+				resultList.add(log);
 			}
-			//System.err.println("luckyCount:"+luckyCount);
 		}
 		
-		//System.err.println(new JSONArray(lastLogList));
+		
 		return resultList;
 	}
 
@@ -297,6 +285,21 @@ public class DestinyServiceImpl implements DestinyService{
 			
 			
 		}
+	}
+
+	@Override
+	public List<LuckylogExtends> lastWinnerMemberList(int gno) {
+		int lastGno = 0;
+		if(gno > 0){
+			lastGno = gno -1;
+		}
+		if(0 == lastGno){
+			return null;
+		}
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		param.put("lastGno", lastGno);
+		List<LuckylogExtends> list = luckylogMapper.selectLastWinner(param);
+		return list;
 	}
 
 

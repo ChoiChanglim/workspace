@@ -26,14 +26,6 @@ public class LayoutInterceptor extends HandlerInterceptorAdapter{
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView){
         try{
             TilesOn tilesOn = ((HandlerMethod)handler).getMethodAnnotation(TilesOn.class);
-            /*System.err.println("### "+modelAndView.getViewName());
-            String[] viewPath = modelAndView.getViewName().split("[/]");
-            String viewName = "";
-            for(int i=0;i<viewPath.length;i++){
-                System.err.println("viewPath["+i+"]:"+viewPath[i]);
-                viewName = viewPath[i].replace("", "index");
-            }
-            System.err.println("$$$ " + viewName);*/
             if(null != tilesOn){
                 modelAndView.setViewName(modelAndView.getViewName()+".tiles");
             }

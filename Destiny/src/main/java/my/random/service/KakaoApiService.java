@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.HashMap;
 
+import my.random.api.constant.SupportKakao.PlusFriendsStatusEnum;
 import my.random.api.exception.CustomException;
 import my.random.api.exception.RedirectException;
 import my.random.api.util.HttpWebURLConnection;
@@ -28,6 +29,8 @@ public class KakaoApiService {
     public static final String KakaoCallbackUri = "/kakao/oauth";    
     public static String REDIRECT_URI_LOGIN="/api/kakao/redirect_login"; 
     public static final String KakaoServerCipherKey = "XBOXONEXSONYPLAYSTATION4";
+    public static final String KakaoChannelID = "_gXmsC";
+    public static final String KakaoAdminKey = "5b8b58b7ebe6e569203ca14cddd6926f";
     
     public enum KakaoHost{
     	OAUTH("https://kauth.kakao.com"),
@@ -48,12 +51,15 @@ public class KakaoApiService {
     public enum KakaoApi {
         OAUTH_GET_CODE("/oauth/authorize"),
         OAUTH_GET_TOKEN("/oauth/token"),
+        KAPI_ACCESS_TOKEN_INFO("/v1/user/access_token_info"),
         KAPI_KAKAO_USER_PROFILE("/v2/user/me"),
         KAPI_STORY_PROFILE("/v1/api/story/profile"),
         KAPI_STORY_POSTING_NOTE("/v1/api/story/post/note"),
-        KAPI_TALK_SENDME("v2/api/talk/memo/default/send");
-
-
+        KAPI_TALK_SENDME("/v2/api/talk/memo/default/send"),
+        KAPI_PLUSFRIENDS("/v1/api/talk/plusfriends"),
+        KAPI_TARGET_USER_FILE("/v1/talkchannel/create/target_user_file"),
+        
+        ;
         private String uri;
         private KakaoApi(String uri){
             this.uri = uri;
@@ -132,6 +138,27 @@ public class KakaoApiService {
     	LOG.error("Kakao Access Token 생성 과정 중  responseCode:"+result.getResponseCode());
     	throw CustomException.HTTP_WEB_CALL_EXCEPTION;
     }
+    
+    /**
+     * 카카오 Accesstoken refresh
+     * @param refreshToken
+     * @return
+     */
+    public static HashMap<String, Object> GetRefreshKakaoAccessToken(String refreshToken) {
+        HashMap<String, Object> param = new HashMap<String, Object>();
+        param.put("grant_type", "refresh_token");
+        param.put("client_id", KakaoAppkey);
+        param.put("refresh_token", refreshToken);
+
+        String dest = KakaoApi.OAUTH_GET_TOKEN.getURL() + "?" + RequestUtil.getQstr(param);
+        HttpWebURLConnection conn = new HttpWebURLConnection(dest, param);
+        HttpWebURLResponse result =  conn.sendPostByParamTypeJson();
+        if(200 == result.getResponseCode()){
+        	return JsonUtil.JSONSourceToHashMap(result.getResult());
+        }
+    	LOG.error("Kakao Access Token 생성 과정 중  responseCode:"+result.getResponseCode());
+    	throw CustomException.HTTP_WEB_CALL_EXCEPTION;
+    }
 
     /**
      * 카카오 유저 조회
@@ -199,4 +226,82 @@ public class KakaoApiService {
         String dest = KakaoApi.OAUTH_GET_CODE.getURL();
         return KakaoApi.OAUTH_GET_CODE.getURL() + "?" + RequestUtil.getMapToQstr(param);
 	}
+	
+	/**
+	 * 토큰 유효성 확인
+	 * @param kakaoAccessToken
+	 * @return
+	 */
+	public static boolean HasValidToken(String kakaoAccessToken){
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		HttpWebURLConnection conn = new HttpWebURLConnection(KakaoApi.KAPI_ACCESS_TOKEN_INFO.getURL(), param);
+        HashMap<String, String> headerMap = new HashMap<String, String>();
+        headerMap.put("Authorization", "Bearer "+kakaoAccessToken);
+        conn.setHeader(headerMap);
+        try {
+            HttpWebURLResponse result = conn.sendGet();
+            //System.err.println(new JSONObject(result.getResultMap()));
+            HashMap<String, Object> resultMap = result.getResultMap();
+            boolean isContains = resultMap.containsKey("expires_in");
+            if(isContains == true){
+            	int expiresIn = (Integer)resultMap.get("expires_in");
+            	if(expiresIn > 0){
+            		return true;
+            	}
+            }
+        } catch (Exception e) {
+        	LOG.error("Kakao api exception!"+KakaoApi.KAPI_ACCESS_TOKEN_INFO.getURL()+", "+new JSONObject(headerMap)+", "+new JSONObject(param));
+        }
+        
+        return false;
+	}
+	
+	/**
+	 * 채널관계 확인 (비즈니스 신청 후 별도의권한이 필요함)
+	 * @param kakaoAccessToken
+	 * @return
+	 */
+	public static PlusFriendsStatusEnum GetPlusFriendsStatus(String kakaoAccessToken){
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		HttpWebURLConnection conn = new HttpWebURLConnection(KakaoApi.KAPI_PLUSFRIENDS.getURL(), param);
+        HashMap<String, String> headerMap = new HashMap<String, String>();
+        headerMap.put("Authorization", "Bearer "+kakaoAccessToken);
+        conn.setHeader(headerMap);
+        try {
+            HttpWebURLResponse result = conn.sendGet();
+            System.err.println(new JSONObject(result.getResultMap()));
+        } catch (Exception e) {
+        	LOG.error("Kakao api exception!"+KakaoApi.KAPI_PLUSFRIENDS.getURL()+", "+new JSONObject(headerMap)+", "+new JSONObject(param));
+        }
+        
+        return PlusFriendsStatusEnum.NONE;
+	}
+	
+	
+	
+	public static boolean UploadTargetUserFile(){
+		HashMap<String, Object> param = new HashMap<String, Object>();
+		param.put("channel_public_id", KakaoChannelID);
+		param.put("file_name", "WINNER_20200725");
+		
+		JSONObject schema = new JSONObject(); 
+		schema.accumulate("전화번호", "010-3166-7992");
+		schema.accumulate("응모일", "2020-07-25T21:00");
+		
+		param.put("schema", schema);
+		
+		HttpWebURLConnection conn = new HttpWebURLConnection(KakaoApi.KAPI_TARGET_USER_FILE.getURL(), param);
+        HashMap<String, String> headerMap = new HashMap<String, String>();
+        headerMap.put("Authorization", "KakaoAK "+KakaoAdminKey);
+        conn.setHeader(headerMap);
+        try {
+            HttpWebURLResponse result = conn.sendPostByParamTypeJson();
+            System.err.println(new JSONObject(result.getResultMap()));
+        } catch (Exception e) {
+        	LOG.error("Kakao api exception!"+KakaoApi.KAPI_TARGET_USER_FILE.getURL()+", "+new JSONObject(headerMap)+", "+new JSONObject(param));
+        }
+        
+        return false;
+	}
+	
 }

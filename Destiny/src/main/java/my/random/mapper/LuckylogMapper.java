@@ -1,8 +1,12 @@
 package my.random.mapper;
 
+import java.util.HashMap;
 import java.util.List;
+
 import my.random.bean.Luckylog;
 import my.random.bean.LuckylogExample;
+import my.random.bean.LuckylogExtends;
+
 import org.apache.ibatis.annotations.Param;
 
 public interface LuckylogMapper {
@@ -93,4 +97,6 @@ public interface LuckylogMapper {
      * @mbggenerated Fri Jul 29 18:15:32 KST 2016
      */
     int updateByPrimaryKey(Luckylog record);
+
+	List<LuckylogExtends> selectLastWinner(HashMap<String, Object> param);
 }

@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -21,6 +22,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -1193,4 +1196,35 @@ public class StringUtil {
 	public static String getRandomString(int length){
         return UUID.randomUUID().toString().replaceAll("-", "").substring(0, length);
     }
+	
+	public static String MaskingName(String str) {
+		String replaceString = str;
+
+		String pattern = "";
+		if(str.length() == 2) {
+			pattern = "^(.)(.+)$";
+		} else {
+			pattern = "^(.)(.+)(.)$";
+		}
+
+		Matcher matcher = Pattern.compile(pattern).matcher(str);
+
+		if(matcher.matches()) {
+			replaceString = "";
+
+			for(int i=1;i<=matcher.groupCount();i++) {
+				String replaceTarget = matcher.group(i);
+				if(i == 2) {
+					char[] c = new char[replaceTarget.length()];
+					Arrays.fill(c, '*');
+
+					replaceString = replaceString + String.valueOf(c);
+				} else {
+					replaceString = replaceString + replaceTarget;
+				}
+
+			}
+		}
+		return replaceString;
+	}
 }

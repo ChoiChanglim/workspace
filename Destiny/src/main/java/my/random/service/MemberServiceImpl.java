@@ -43,4 +43,13 @@ public class MemberServiceImpl implements MemberService{
 		
 	}
 
+	@Override
+	public boolean IsMember(MemberKey memberKey) {
+		Member m = memberMapper.selectByPrimaryKey(memberKey);
+		if(null == m){
+			return false;
+		}
+		return true;
+	}
+
 }

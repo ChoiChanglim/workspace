@@ -38,7 +38,13 @@ public class ManageServiceImpl implements ManageService{
         if(gdateByLastGameDate.equals(drawingDate) == false){//오늘 크롤링이 아직 안되었다면(당첨정보 업데이트가 아직 안되었을때)
             int gno = lastDestinyInfo.getGno() + 1;
             WinNumber winNumber = LottoReader.ReadWinnumberResult(gno);
-            if(winNumber.getGno() == gno && "0".equals(winNumber.getThirdAmount())== false ){
+            if("0".equals(winNumber.getFirstCount()) 
+            		|| "0".equals(winNumber.getSecondCount())
+            		|| "0".equals(winNumber.getThirdCount())
+                		){
+                	return;
+                }
+                if(winNumber.getGno() == gno ){
                 DestinyInfo destinyInfo = new DestinyInfo();
                 destinyInfo.setGno(gno);
                 destinyInfo.setNo1(winNumber.getNums().get(0));

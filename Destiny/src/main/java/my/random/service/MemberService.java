@@ -1,7 +1,10 @@
 package my.random.service;
 
+import java.util.List;
+
 import my.random.api.constant.SupportMember.MemberDivEnum;
 import my.random.bean.Member;
+import my.random.bean.MemberKey;
 
 public interface MemberService {
 
@@ -9,6 +12,9 @@ public interface MemberService {
 
 	void insert(Member m);
 
-	void platformNickUpdate(MemberDivEnum kakao, String kid, String nick);
+	void platformNickUpdate(MemberDivEnum udiv, String uid, String nick);
+
+	boolean IsMember(MemberKey memberKey);
+
 	
 }

@@ -11,6 +11,7 @@ import java.util.List;
 
 import my.random.api.util.DateUtil;
 import my.random.api.util.RequestUtil;
+import my.random.bean.DestinyInfo;
 import my.random.bean.WinNumber;
 
 import org.apache.tika.exception.TikaException;
@@ -197,8 +198,16 @@ public class LottoReader {
 
     /**
      *  * 날짜로 게임번호 조회  * @param today  * @return  
+     * @param destinyInfo 
      */
-    public static int getGnum(Date somedate) {
+    public static int getGnum(Date somedate, DestinyInfo destinyInfo) {
+    	String gDateTime = DateUtil.convertDateToString(destinyInfo.getGdate(), "yyyyMMddHHmmss"); 
+		String todayTime = DateUtil.convertDateToString(new Date(), "yyyyMMddHHmmss");
+		
+		if( (Long.valueOf(gDateTime) < Long.valueOf(todayTime)) 
+				){
+			return destinyInfo.getGno() + 1;
+		}
         int gnum = 0;
         Calendar c = Calendar.getInstance();
         c.setTime(somedate);

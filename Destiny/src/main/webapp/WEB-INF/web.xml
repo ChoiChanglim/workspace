@@ -25,7 +25,33 @@
 		<servlet-name>dispatcherServlet</servlet-name>
 		<url-pattern>/</url-pattern>
 		<url-pattern>/index</url-pattern>
+		
+		<!-- CROSS EDITOR 4.3.2.28 -->
+        <url-pattern>/ce/4.3.2.28/websource/jsp/EditorAuth.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.28/websource/jsp/EditorInformation.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.28/websource/jsp/ExpireAuth.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.28/websource/jsp/FileUpload.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.28/websource/jsp/ImageUpload.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.28/websource/jsp/upload.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.28/websource/jsp/interface.jsp</url-pattern>
+		
+		<!-- CROSS EDITOR 4.3.2.25 -->
+        <url-pattern>/ce/4.3.2.25/websource/jsp/EditorAuth.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.25/websource/jsp/EditorInformation.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.25/websource/jsp/ExpireAuth.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.25/websource/jsp/FileUpload.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.25/websource/jsp/ImageUpload.jsp</url-pattern>
+        <url-pattern>/ce/4.3.2.25/websource/jsp/upload.jsp</url-pattern>
 	</servlet-mapping>
+	
+	<!-- default servlet -->
+    <servlet>
+        <servlet-name>default</servlet-name>
+    </servlet>
+    <servlet-mapping>
+    <servlet-name>default</servlet-name>
+	    <url-pattern>/resources/*</url-pattern>
+    </servlet-mapping>
 	
 	<filter>
 		<filter-name>encodingFilter</filter-name>

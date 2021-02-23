@@ -23,13 +23,18 @@ import my.random.api.annotation.TilesOn;
 import my.random.api.constant.LottoReader;
 import my.random.api.constant.SessionScopeBean;
 import my.random.api.constant.SupportMember.MemberDivEnum;
+import my.random.api.constant.SupportMember.MemberStateEnum;
 import my.random.api.exception.RedirectException;
 import my.random.api.interceptor.CookieInterceptor;
 import my.random.api.util.AesCipher;
+import my.random.api.util.DateUtil;
 import my.random.api.util.RequestUtil;
 import my.random.api.util.StringUtil;
+import my.random.bean.DestinyInfo;
 import my.random.bean.Luckylog;
+import my.random.bean.LuckylogExtends;
 import my.random.bean.Member;
+import my.random.bean.MemberKey;
 import my.random.service.DestinyService;
 import my.random.service.KakaoApiService;
 import my.random.service.LoginService;
@@ -68,6 +73,13 @@ public class DestinyController {
     
     @Value("#{propinfo['TEMP_IMG_PATH']}")
     private String TEMP_IMG_PATH;
+    
+    @RequestMapping(value = "/**")
+    public ModelAndView index(HttpServletRequest req, HttpServletResponse res){
+    	ModelAndView modelAndView = new ModelAndView();
+    	return modelAndView;
+    }
+    		
 
     @TilesOn
     @RequestMapping(value = "/index", method = RequestMethod.GET)
@@ -85,28 +97,41 @@ public class DestinyController {
         
         
         if(sessionBean.isSignIn()){
-        	
+        	ukey = sessionBean.getUid();
         	MemberDivEnum memberDivEnum = MemberDivEnum.GetMemberDivEnum(sessionBean.getUdiv());
         	Member member = memberService.getUser(sessionBean.getUid(), memberDivEnum);
-        	ukey = sessionBean.getUid();
+        	modelAndView.addObject("memberDivEnum", memberDivEnum);
         	nick = member.getUname();
         }
 
         modelAndView.addObject("nick", nick);
-        modelAndView.addObject("lastResult", destinyService.getLastDestinyInfo());
+        DestinyInfo destinyInfo = destinyService.getLastDestinyInfo();
+        List<Integer> lastLuckyNo = new ArrayList<Integer>();
+        lastLuckyNo.add(destinyInfo.getNo1());
+        lastLuckyNo.add(destinyInfo.getNo2());
+        lastLuckyNo.add(destinyInfo.getNo3());
+        lastLuckyNo.add(destinyInfo.getNo4());
+        lastLuckyNo.add(destinyInfo.getNo5());
+        lastLuckyNo.add(destinyInfo.getNo6());
+        modelAndView.addObject("lastResult", destinyInfo);
+        modelAndView.addObject("lastLuckyNo", lastLuckyNo);
         
-        List<Luckylog> mylist = destinyService.getMyList(ukey, LottoReader.getGnum(new Date()));
-        modelAndView.addObject("mylist", mylist);
-        modelAndView.addObject("myLuckyList", destinyService.getMyLuckyList(ukey));
+        int gno = LottoReader.getGnum(new Date(), destinyInfo);
+		List<Luckylog> mylist = destinyService.getMyList(ukey, gno);
+		modelAndView.addObject("mylist", mylist);
+		
+		if(mylist.size() > 2) {
+        	modelAndView.addObject("second", mylist.get(1));
+        }
+		List<Luckylog> myLuckylogList = destinyService.getMyLuckyList(ukey);
+		
+        modelAndView.addObject("myLuckylogList", myLuckylogList);
         modelAndView.addObject("ukey", ukey);
         modelAndView.addObject("isSignin", sessionBean.isSignIn());
         
-        
-        if(mylist.size() > 2) {
-        	modelAndView.addObject("second", mylist.get(1));
-        }
-        
-        
+        List<LuckylogExtends> allWinnerList = destinyService.lastWinnerMemberList(gno);
+        modelAndView.addObject("allWinnerList", allWinnerList);
+        //System.err.println(new JSONArray(allWinnerList));
 
         return modelAndView;
     }
@@ -124,14 +149,44 @@ public class DestinyController {
         	Member member = memberService.getUser(sessionBean.getUid(), memberDivEnum);
         	ukey = sessionBean.getUid();
         	nick = member.getUname();
+        }else{
+        	MemberKey memberKey = new MemberKey();
+	        memberKey.setUdiv(MemberDivEnum.NO_MEMBER.name());
+	        memberKey.setUid(ukey);
+	        
+	        Member m = new Member();
+        	m.setUid(memberKey.getUid());
+        	m.setUdiv(memberKey.getUdiv());
+        	
+	        boolean isMember = memberService.IsMember(memberKey);
+	        if("".equals(nick)){
+        		nick = ukey;
+        	}
+        	m.setUname(nick);     
+	        if(isMember){
+	        	memberService.platformNickUpdate(MemberDivEnum.NO_MEMBER, memberKey.getUid(), nick);
+	        	
+	        }else{
+	        	   	
+	        	m.setEmail("");        
+		        m.setGender("");
+		        m.setAgeRangeMin(0);
+		        m.setAgeRangeMax(0);
+		        m.setState(MemberStateEnum.INACTIVE.name());
+		        m.setRegdate(new Date());
+		        m.setRecentLoginDate(new Date());
+		        m.setPasswd("");
+		        memberService.insert(m);
+	        }
         }
+        
         CookieInterceptor.SetNick(req, res, nick);
         ModelAndView modelAndView = new ModelAndView();
         List<Integer[]> numsList =  destinyService.create(ukey, count);
         
 
         modelAndView.addObject("numsList", numsList);
-        modelAndView.addObject("nextGno", LottoReader.getGnum(new Date()));
+        modelAndView.addObject("nextGno", LottoReader.getGnum(new Date(), destinyService.getLastDestinyInfo()));
         RequestUtil.setCookie(res, "gcnt", String.valueOf(count), 300);
 
         return modelAndView;
@@ -295,4 +350,16 @@ public class DestinyController {
 		modelAndView.setViewName("redirect:/");
         return modelAndView;
     }
+    
+    @RequestMapping(value = "/KakaoUploadTargetUserFile")
+    public ModelAndView KakaoUploadTargetUserFile(HttpServletRequest req, HttpServletResponse res
+    		){
+        ModelAndView modelAndView = new ModelAndView();
+        
+        KakaoApiService.UploadTargetUserFile();
+        
+        return modelAndView;
+    }
+    
+    
 }
