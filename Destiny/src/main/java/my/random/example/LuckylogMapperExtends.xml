@@ -18,6 +18,7 @@
     <result column="no5" property="no5" jdbcType="INTEGER" />
     <result column="no6" property="no6" jdbcType="INTEGER" />
     <result column="regdate" property="regdate" jdbcType="TIMESTAMP" />
+    <result column="message_no" jdbcType="INTEGER" property="messageNo" />
     
     <result column="uname" property="uname" jdbcType="VARCHAR" />
     <result column="udiv" property="udiv" jdbcType="VARCHAR" />
@@ -28,6 +29,7 @@
 	    ll.gno,
 	    ll.regdate,
 	    ll.grade,
+	    ll.message_no,
 	    IFNULL(m.uname,ll.nick) as uname,
 	    IFNULL(m.udiv,'NO_MEMBER') as udiv
 	    

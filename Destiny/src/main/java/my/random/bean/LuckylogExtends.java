@@ -25,7 +25,7 @@ public class LuckylogExtends extends Luckylog{
 		return StringUtil.MaskingName(uname);
 	}
 	public String getWinnerMessage() {
-		WinnersMessageEnum winnersMessageEnum = WinnersMessageEnum.GetWinnersMessage(getGrade());
+		WinnersMessageEnum winnersMessageEnum = WinnersMessageEnum.GetWinnersMessage(getGrade(), getMessageNo());
 		return winnersMessageEnum.getMessage();
 	}
 	

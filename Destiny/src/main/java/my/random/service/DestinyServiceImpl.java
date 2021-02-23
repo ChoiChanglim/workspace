@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import my.random.api.constant.LottoReader;
+import my.random.api.constant.WinnersMessageEnum;
 import my.random.api.constant.YourLucky;
 import my.random.api.constant.YourLucky.BasicSetting;
 import my.random.api.exception.CustomException;
@@ -279,6 +280,8 @@ public class DestinyServiceImpl implements DestinyService{
 			//update 
 			if(grade < 6){
 				log.setGrade(grade);
+				WinnersMessageEnum winnersMessageEnum = WinnersMessageEnum.GetWinnersMessage(grade);
+				log.setMessageNo(winnersMessageEnum.getNo());
 				luckylogMapper.updateByPrimaryKeySelective(log);
 				//System.err.println(log.getSeq()+" - "+"eqCount:"+eqCount+", grade:"+grade);
 			}
