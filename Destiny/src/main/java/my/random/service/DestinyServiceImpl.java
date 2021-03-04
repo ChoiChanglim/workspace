@@ -122,6 +122,7 @@ public class DestinyServiceImpl implements DestinyService{
             log.setNo6(nums[5]);
             log.setRegdate(new Date());
             log.setGrade(0);
+            log.setMessageNo(0);
             luckylogMapper.insert(log);
             
         }
@@ -163,6 +164,7 @@ public class DestinyServiceImpl implements DestinyService{
             log.setNo6(nums[5]);
             log.setRegdate(new Date());
             log.setGrade(0);
+            log.setMessageNo(0);
             luckylogMapper.insert(log);
         }
         return result;

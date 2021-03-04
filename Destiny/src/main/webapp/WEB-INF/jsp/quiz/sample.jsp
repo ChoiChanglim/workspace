@@ -6,6 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
 <title>테스트</title>
 <link rel="shortcut icon" href="#">
 <link rel="stylesheet" type="text/css" href="/resources/css/slick.css"/>
@@ -31,6 +32,8 @@ jQuery(document).ready(function(){
             dots: false,
             autoplay:false,
             draggable : false,
+            touchMove : false,  
+            swipe : false,
             appendDots: $('.dots'),
             /* customPaging : function(slider, i) {
                 console.log(slider);
@@ -88,6 +91,12 @@ function toNumber(str){
 <style>
 .quiz_zone{width:500px;height:200px;border:1px solid #000; display:none}
 .dots{display:none;width:500px; text-align: center;}
+.slick-active:focus, slick-slide:focus, slick-current:focus, slick-track:focus, .slick-slide {
+    outline: none;
+}
+.slick-active:drag {
+    pointer-events: none
+}
 .slick-dots {
     pointer-events: none
 }
@@ -102,11 +111,11 @@ function toNumber(str){
             <c:forEach items="${quizAndChoiceList }" var="list">
                 <!-- 퀴즈 한개 -->
                 <div>
-                    <p>${list.quizEnum }</p>
+                    <p>${list.quizEnum.quiz }</p>
                     <!-- 퀴즈의 보기  -->
                     <ul>
                         <c:forEach items="${list.choiceList }" var="choiceList">
-                            <li class="answer_btn" data="${choiceList }" no="${list.quizEnum.no }"><button>${choiceList.choice }</button></li>
+                            <li><button class="answer_btn" data="${choiceList }" no="${list.quizEnum.no }">${choiceList.choice }</button></li>
                         </c:forEach>
                     </ul>
                 </div>
